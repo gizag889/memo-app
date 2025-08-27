@@ -1,7 +1,8 @@
 import Layout from "./components/Layout";
 import Editor from "./components/Editor";
+import MemoList from "./components/MemoList";
 import { useState } from "react";
-import type { Memo } from "./types/index";
+import type { Memo } from "./types";
  
 const initialMemo = {
   id: Date.now(),
@@ -9,7 +10,7 @@ const initialMemo = {
   timestamp: new Date().toLocaleString("ja-JP"),
 };
  
-function App() {
+function App(){
   const [memos, setMemos] = useState<Memo[]>([initialMemo]);
  
   const addMemo = (inputText: string) => {
@@ -20,6 +21,8 @@ function App() {
         timestamp: new Date().toLocaleString("ja-JP"),
       };
       setMemos([memo, ...memos]);
+      //新しく作成したmemoオブジェクトを配列の先頭に追加、最新のメモが常に最上位に
+      //[memo, ...memos]：新しいメモ + 既存の全メモという新しい配列を作成
     }
   };
  
@@ -32,9 +35,8 @@ function App() {
           onSubmit={addMemo}
         />
       </div>
-      {memos.map((memo) => (
-        <p key={memo.id}>{memo.text}</p>
-      ))}
+ 
+      <MemoList memos={memos} setMemos={setMemos} />
     </Layout>
   );
 }
