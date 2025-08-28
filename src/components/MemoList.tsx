@@ -2,6 +2,8 @@ import { useState } from "react";
 import { MessageCircle } from "lucide-react";
 import type { Memo, Reply } from "../types";
 import Editor from "./Editor";
+import ContentBody from "./ContentBody";
+import ReplyList from "./ReplyList";
  
 type MemoListProps = {
   memos: Memo[];
@@ -15,35 +17,31 @@ const MemoList = (props: MemoListProps) => {
     id: number;
     type: "memo" | "reply";
   } | null>(null);
-
+ 
   const updateMemo = (inputText: string) => {
     if (inputText.trim() && editingTo) {
-        //editingToは入力テキストが空文字や空白でないか確認
       props.setMemos(
         props.memos.map((memo) =>
-            //すべてのメモをmapでループ処理してmemo.id === editingTo.idで編集中のメモを特定
           memo.id === editingTo.id ? { ...memo, text: inputText } : memo
-
         )
       );
       setEditingTo(null);
-      //編集操作が完了したことをコンポーネントに伝える。編集中のメモがない状態にリセットする
     }
   };
-   
+ 
   const deleteMemo = (id: number) => {
     props.setMemos(props.memos.filter((memo) => memo.id !== id));
     setReplies(replies.filter((reply) => reply.parentId !== id));
   };
-
+ 
   const startEdit = (id: number, type: "memo" | "reply") => {
     setEditingTo({ id: id, type: type });
   };
-   
+ 
   const getRepliesForMemo = (memoId: number) => {
     return replies.filter((reply) => reply.parentId === memoId);
   };
-
+ 
   const addReply = (inputText: string) => {
     if (inputText.trim() && replyingTo) {
       const reply: Reply = {
@@ -56,7 +54,6 @@ const MemoList = (props: MemoListProps) => {
       setReplyingTo(null);
     }
   };
- 
   return (
     <>
       {props.memos.map((memo) => (
@@ -68,14 +65,21 @@ const MemoList = (props: MemoListProps) => {
             <Editor initialValue={memo.text} onSubmit={updateMemo} />
           ) : (
             <div className="space-y-4">
-              {/* ContentBody */}
-              {memo.text}
+              <ContentBody
+                type="memo"
+                content={memo}
+                onDelete={deleteMemo}
+                startEdit={startEdit}
+              />
               <hr />
               <div className="ml-8 space-y-4">
-                {/* ReplyList */}
-                {getRepliesForMemo(memo.id).map((reply) => (
-                  <p key={reply.id}>{reply.text}</p>
-                ))}
+                <ReplyList
+                  replies={getRepliesForMemo(memo.id)}
+                  setReplies={setReplies}
+                  startEdit={startEdit}
+                  editingTo={editingTo}
+                  setEditingTo={setEditingTo}
+                />
                 {replyingTo === memo.id ? (
                   <Editor onSubmit={addReply} placeholder="リプライを入力..." />
                 ) : (
