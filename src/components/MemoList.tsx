@@ -8,15 +8,13 @@ import ReplyList from "./ReplyList";
 type MemoListProps = {
   memos: Memo[];
   setMemos: React.Dispatch<React.SetStateAction<Memo[]>>;
+  //おなじなまえだからそのままいけちゃう
 };
  
 const MemoList = (props: MemoListProps) => {
   const [replies, setReplies] = useState<Reply[]>([]);
   const [replyingTo, setReplyingTo] = useState<number | null>(null);
-  const [editingTo, setEditingTo] = useState<{
-    id: number;
-    type: "memo" | "reply";
-  } | null>(null);
+  const [editingTo, setEditingTo] = useState<{id: number; type: "memo" | "reply";} | null>(null);
  
   const updateMemo = (inputText: string) => {
     if (inputText.trim() && editingTo) {

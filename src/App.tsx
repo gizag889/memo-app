@@ -15,6 +15,7 @@ function App(){
  
   const addMemo = (inputText: string) => {
     if (inputText.trim()) {
+      //trim()は空白の削除と空白のみの文字列をfalseと評価する役割
       const memo: Memo = {
         id: Date.now(),
         text: inputText,
@@ -37,8 +38,14 @@ function App(){
       </div>
  
       <MemoList memos={memos} setMemos={setMemos} />
+      //ここで具体的な値を渡す
     </Layout>
   );
 }
  
 export default App;
+
+// 親 (App): addMemo を定義し、Editor の onSubmit に渡す。
+// 子 (Editor): 受け取った onSubmit を、入力中の inputText を引数にして呼ぶ。
+// 効果: Editor のボタン→ onSubmit(inputText) → 親の addMemo 実行 → memos 更新 → 画面に新メモが表示。
+// 付加動作: Editor は送信後に setinputText("") で入力欄をクリア。
